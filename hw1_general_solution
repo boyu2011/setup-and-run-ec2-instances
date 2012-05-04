@@ -1,0 +1,47 @@
+All,
+
+I've just sent out grades for HW#1.  If you have not received an email
+from me with your grade, please let me know.
+
+A few general notes:
+
+I would have liked you -- and in the future will expect -- a bit more
+reflection/commentary on the outcomes of the commands you ran.  You
+should have noticed that the output between the same commands on
+different operating systems differs; think about what the differences
+are, and what they mean.
+
+Look at the mounted filesystems on the different operating systems.  Do
+you know why each is mounted?
+
+Look at the output of 'netstat' -- do you understand all output?  Why is
+it representation of some information different on the two systems?
+
+Look at the output of 'ifconfig' -- on one system you get a lot more
+information than on the other; how would you go about finding that
+information on the one with the shorter output?
+
+
+I also would like to see more independent thought, not just mindless
+execution of commands.  For example, if you attempt to print the
+partition table, and the output includes something like:
+
+Disk /dev/sda1 doesn't contain a valid partition table                                              
+
+...then it would be good for you to think about and comment on what that
+might mean.
+
+
+Similarly, even if you get output that looks ok, but a warning like:
+
+/dev/dsk/c3d0s0 is part of active ZFS pool rpool. Please see zpool(1M).
+
+...then it would be good for you to reference the given manual page and
+comment on the meaning of this message.
+
+
+These are just some examples.  Please make sure that you understand all
+the output of all commands we use in this class, and remember to comment
+on anything that might seem worth noting or unusual.
+
+-Jan

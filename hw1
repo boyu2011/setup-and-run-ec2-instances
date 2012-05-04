@@ -1,0 +1,59 @@
+
+CS615A -- Aspects of System Administration - Spring 2012 - HW#1
+
+HW#1: Setup your environment for EC2 and create an instance
+
+Summary:
+
+The objective of this assignment is for you to set up your preferred working environment to make it easy for you to interact with the Amazon Compute Cloud. As providing good documentation is an important part of System Administration, you should create your own reference document that outlines how you set up your environment and what steps you need to take to create a new EC2 instance.
+
+The documentation you write should be theoretically suitable for anybody, as a kind of HOWTO. Please make sure to not include any private information. It is perfectly acceptable for you to reference other publicly available documents (and this is preferable to you copy-and-pasting other contents into your documentation). Likewise, it is perfectly acceptable to publicly ask (and answer!) questions, for example in the AWS Forum or our course mailing list.
+
+In addition to setting up your first instance, you will also familiarize yourself with some of the commands relating to filesystems, disks and storage as we will discuss in lecture #2.
+
+This assignment is worth 25 points.
+
+Review provided documentation
+
+Make sure to carefully read through the following documentation:
+
+http://aws.amazon.com/ec2/
+Amazon Elastic Compute Cloud Getting Started Guide
+Amazon EC2 Getting Started Guide
+Getting Started with the Command Line Tools
+Set up your environment
+
+You need to set up your environment for interaction with the Amazon Cloud. I don't care where you set up your main working environment (ie whether or not it's on the lab.cs.stevens.edu hosts, your private laptop or wherever), but you do need to provide a document outlining what steps you took to customize or update your setup. This includes any software installation (on lab.cs.stevens.edu the Amazon EC2 and related cloud tools are already installed under /opt/ec2tools-1.3), updating of environment variables etc.
+
+Please note that we will only focus on using the command-line tools for EC2. That is, your HOWTO should describe the setup to use these tools and not how to use the browser based interface. That is, your documentation will not include sentences like "...then click on..." or "...select from the menu..." or anything like that.
+
+Create an EC2 instance
+
+Create an EC2 instance and start it. The instance needs to be a Sun OpenSolaris instance. Once it is running, log in on the virtual host and run the required commands to:
+
+display basic system information
+display the partition table
+display the currently mounted filesystems
+display available disk space
+After you are done, remember to shut down your instance.
+Repeat the same process for a Linux instance (no matter what kind or type of Linux).
+
+Deliverables and Due Date
+
+Your deliverable is a single flat text file (plain ascii, preferably created via a unix editor such as vi(1)) named "$USER-hw1" (where "$USER" is your username). The file needs to contain:
+
+your full name
+your @stevens.edu email address
+reasonably detailed step-by-step instructions on how you set up or customized your working environment
+reasonably detailed step-by-step instructions on how to create and start an instance of the given OS type and log in
+the output of the following commands run on your running instances (ie once for OpenSolaris, once for Linux):
+uname -a
+whoami
+date
+w
+ifconfig -a
+netstat -na
+the commands you determine to be used to display the partition table, currently mounted filesystems, disk space
+The due date for this assignment is 2012-02-06 18:00. Please attach the file to an email sent from your @stevens.edu email address to jschauma@stevens.edu with a subject of "[CS615] HW1".
+
+[Course Website]

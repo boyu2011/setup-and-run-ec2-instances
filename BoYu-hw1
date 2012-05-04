@@ -1,0 +1,343 @@
+Name: Bo Yu
+
+Email: byu1@stevens.edu
+
+Summary
+
+In this homework, I will give you a step-by-step instructions to describe how to setup an environment to make it easy to interact with the Amazon Elastic Cloud Computing.
+
+Setup Environment
+
+	0. Setup an AWS account at http://aws.amazon.com/ 
+	    Click the Sign Up Now button at the right of the page.
+
+	1. Setup Command line tools
+
+	1.1 Prerequisites
+     
+	     An installation of Java 5 compatible JRE is required.
+
+	1.1.1 Setting the Java Home Variable since the command line tools depend on an environment variable (JAVA_HOME) to locate Java Runtime.
+
+	     $ export JAVA_HOME=/usr
+
+	1.1.2 Use text editor to open ~/.bash_profile, add the following text in it.
+
+	     export JAVA_HOME=/usr
+
+	1.1.3 To confirm this by open a new terminal and typing in the shell.
+
+	     $ $JAVA_HOME/bin/java -version
+
+	1.2 Setting up the tools.
+
+	1.2.1 Download the tool from following link.
+
+	     http://aws.amazon.com/developertools/351?_encoding=UTF8&jiveRedirect=1
+
+	1.2.2 Unzip the zip file and put it into /opt
+
+	     $ mv ec2-api-tools-1.5.2.4.zip /opt
+	     $ cd /opt
+	     $ unzip ec2-api-tools-1.5.2.4.zip
+
+	1.2.3 Since the command line tools depend on environment variable EC2_HOME to locate supporting libraries, set EC2_HOME to the directory 
+	path. Use a text editor to open ~/.bash_profile, then add the following text in it.
+     
+	     export EC2_HOME=/opt/ec2-api-tools-1.5.2.4
+	     export PATH=$PATH:$EC2_HOME/bin
+
+	1.2.4 Tell the tools who you are. When you registered the AWS account, the process gives you a chance to download your X.509 Certificate 
+	and Private Key. Now set two environment variables to reference the certificate and private key.
+
+	     Use a text editor to open ~/.bash_profile, add the following text in it.
+     
+	     export EC2_PRIVATE_KEY=~/.ec2/pk-name.pem
+	     export EC2_CERT=~/.ec2/cert-name.pem 
+
+	1.2.5 Open a new terminal session to let the environment variable changes work.
+
+
+Create and Start an OpenSolaris instance  
+(http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/LaunchingAndUsingInstances.html)
+
+	1. Finding a suitable AMI by ec2-describe-images command.
+
+	     $ ec2-describe-images -x all | grep opensolaris
+
+	    To remember the AMI ID: ami-name
+
+	2. Getting a SSH key pair by ec2-add-keypair command.
+
+	     $ ec2-add-keypair new-key-name
+
+	    Then copy the output into a file, and name it new-key-name.pem
+
+	    Run the command to change file's permission
+     
+	     $ chmod 400 ./new-key-name.pem
+
+	3. Adding a new security group by ec2-create-group, and adding a new rule that allows us to connect to the instance by SSH.
+
+	     $ ec2-create-group new-security-group-name -d 'description-of-new-group'
+	     $ ec2-authorize new-security-group-name -P tcp -p 22
+
+	4. Running an instance
+
+	4.1 Search the key pair name
+
+	     $ ec2-describe-keypairs
+
+	4.2 Running an instance
+
+	     $ ec2-run-instances ami-name -k new-key-name -g new-security-group-name -t m1.small
+
+	4.3 Checking the status of the running instance.
+
+	     $ ec2-describe-instances new-instance-id
+
+	5. Login to the running instance by SSH, type
+
+	     $ ssh -i ./new-key-name.pem user-name@public-dns-address-of-instance
+
+	The output of the following commands run on OpenSolaris instance
+
+	1. uname -a
+
+	root@ip-10-212-85-140:~# uname -a
+	SunOS ip-10-212-85-140 5.11 snv_101b i86pc i386 i86xpv Solaris
+
+	2. whoami
+
+	root@ip-10-212-85-140:~# whoami
+	root
+
+	3. date
+
+	root@ip-10-212-85-140:~# date
+	Thu Feb  2 22:15:41 GMT 2012
+
+	4. w
+
+	root@ip-10-212-85-140:~# w
+	 10:15pm  up  3:01,  2 users,  load average: 0.00, 0.00, 0.00
+	User     tty           login@  idle   JCPU   PCPU  what
+	root     pts/1         7:47pm  1:52                -bash
+	root     pts/2        10:10pm                      w
+
+	5. ifconfig -a
+
+	root@ip-10-212-85-140:~# ifconfig -a
+	lo0: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+	        inet 127.0.0.1 netmask ff000000
+	xnf0: flags=201004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4,CoS> mtu 1500 index 2
+	        inet 10.212.85.140 netmask ffffff00 broadcast 10.212.85.255
+	        ether 12:31:3b:4:52:62
+	lo0: flags=2002000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv6,VIRTUAL> mtu 8252 index 1
+	        inet6 ::1/128 
+
+	6. netstat -na
+
+	root@ip-10-212-85-140:~# netstat -na
+
+	UDP: IPv4
+	   Local Address        Remote Address      State
+	-------------------- -------------------- ----------
+	      *.68                                Idle
+	      *.546                               Idle
+	10.212.85.140.68                          Idle
+	      *.*                                 Unbound
+
+	UDP: IPv6
+	   Local Address                     Remote Address                   State      If
+	--------------------------------- --------------------------------- ---------- -----
+	      *.546                                                         Idle      
+	      *.*                                                           Unbound   
+
+	TCP: IPv4
+	   Local Address        Remote Address    Swind Send-Q Rwind Recv-Q    State
+	-------------------- -------------------- ----- ------ ----- ------ -----------
+	      *.*                  *.*                0      0 49152      0 IDLE
+	127.0.0.1.4999             *.*                0      0 49152      0 LISTEN
+	      *.22                 *.*                0      0 49152      0 LISTEN
+	127.0.0.1.25               *.*                0      0 49152      0 LISTEN
+	127.0.0.1.587              *.*                0      0 49152      0 LISTEN
+	10.212.85.140.22     155.246.138.207.49748 65440      0 49248      0 ESTABLISHED
+	10.212.85.140.22     155.246.138.207.50625 65664     47 49248      0 ESTABLISHED
+
+	TCP: IPv6
+	   Local Address                     Remote Address                 Swind Send-Q Rwind Recv-Q   State      If
+	--------------------------------- --------------------------------- ----- ------ ----- ------ ----------- -----
+	      *.*                               *.*                             0      0 49152      0 IDLE       
+	      *.22                              *.*                             0      0 49152      0 LISTEN     
+	::1.25                                  *.*                             0      0 49152      0 LISTEN     
+
+	SCTP:
+	        Local Address                   Remote Address          Swind  Send-Q Rwind  Recv-Q StrsI/O  State
+	------------------------------- ------------------------------- ------ ------ ------ ------ ------- -----------
+	0.0.0.0                         0.0.0.0                              0      0 102400      0  32/32  CLOSED
+
+	Active UNIX domain sockets
+	Address  Type          Vnode     Conn  Local Addr      Remote Addr
+	db1bed70 dgram      dae72300 0000000 /var/run/in.ndpd_mib                
+
+
+	7. Display the partition table, mounted filesystems, disk space by df -H
+
+	root@ip-10-212-85-140:~# df -H
+	Filesystem             Size   Used  Avail Use% Mounted on
+	rpool/ROOT/opensolaris
+	                       9.3G   3.3G   6.0G  36% /
+	swap                   1.9G   291k   1.9G   1% /etc/svc/volatile
+	/usr/lib/libc/libc_hwcap3.so.1
+	                       9.3G   3.3G   6.0G  36% /lib/libc.so.1
+	swap                   1.9G   4.1k   1.9G   1% /tmp
+	swap                   1.9G    25k   1.9G   1% /var/run
+	rpool/export           6.0G    20k   6.0G   1% /export
+	rpool/export/home      6.0G    19k   6.0G   1% /export/home
+	rpool                  6.0G    74k   6.0G   1% /rpool
+	mnt                    158G    19k   158G   1% /mnt
+
+
+	Terminate the OpenSolaris instance.
+
+	Type command:
+
+	$ ec2-terminate-instances new-instance-id
+
+
+Create and Start an Linux instance
+
+	1. Finding a suitable AMI by ec2-describe-images command.
+
+	     $ ec2-describe-images -x all | grep ubuntu-11.10
+
+	    To remember the AMI ID: ami-name
+
+	2. Getting a SSH key pair by ec2-add-keypair command.
+
+	     $ ec2-add-keypair new-key-name
+
+	    Then copy the output into a file, and name it new-key-name.pem
+
+	     To run command to change file's permission
+
+	     $ chmod 400 ./new-key-name.pem
+
+	3. Adding a new security group by ec2-create-group, and adding a new rule that allows us to connect to the instance by SSH.
+
+	     $ ec2-create-group new-security-group-name -d 'new group description'
+	     $ ec2-authorize new-security-group-name -P tcp -p 22
+
+	4. Running an instance
+
+	4.1 Search the key pair name
+
+	     $ ec2-describe-keypairs
+
+	4.2 Running an instance
+
+	     $ ec2-run-instances  ami-name -k new-key-name -g new-security-group-name -t m1.small
+
+	4.3 Checking the status of the running instance
+
+	     $ ec2-describe-instances instance-id
+
+	5. Login to the running instance by SSH, type
+
+	     $ ssh -i ./new-key-name.pem user-name@public-dns-address-of-instance
+
+	The output of the following commands run on Linux instance
+
+	1. uname -a
+
+	ubuntu@ip-10-204-58-99:~$ uname -a
+	Linux ip-10-204-58-99 3.0.0-12-virtual #20-Ubuntu SMP Fri Oct 7 18:25:20 UTC 2011 i686 i686 i386 GNU/Linux
+
+	2. whoami
+
+	ubuntu@ip-10-204-58-99:~$ whoami
+	ubuntu
+
+	3. date
+
+	ubuntu@ip-10-204-58-99:~$ date
+	Thu Feb  2 22:54:13 UTC 2012
+
+	4. w
+
+	ubuntu@ip-10-204-58-99:~$ w
+	 22:54:25 up 9 min,  1 user,  load average: 0.00, 0.07, 0.09
+	USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+	ubuntu   pts/0    host-studentw-13 22:47    0.00s  0.85s  0.00s w
+
+	5. ifconfig -a
+
+	ubuntu@ip-10-204-58-99:~$ ifconfig -a
+	eth0      Link encap:Ethernet  HWaddr 12:31:3b:0a:39:95 
+	          inet addr:10.204.58.99  Bcast:10.204.59.255  Mask:255.255.254.0
+	          inet6 addr: fe80::1031:3bff:fe0a:3995/64 Scope:Link
+	          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+	          RX packets:415 errors:0 dropped:0 overruns:0 frame:0
+	          TX packets:374 errors:0 dropped:0 overruns:0 carrier:0
+	          collisions:0 txqueuelen:1000
+	          RX bytes:52110 (52.1 KB)  TX bytes:45760 (45.7 KB)
+	          Interrupt:27
+
+	lo        Link encap:Local Loopback 
+	          inet addr:127.0.0.1  Mask:255.0.0.0
+	          inet6 addr: ::1/128 Scope:Host
+	          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+	          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+	          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+	          collisions:0 txqueuelen:0
+	          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+
+	6. netstat -na
+
+	ubuntu@ip-10-204-58-99:~$ netstat -na
+	Active Internet connections (servers and established)
+	Proto Recv-Q Send-Q Local Address           Foreign Address         State     
+	tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN    
+	tcp        0    320 10.204.58.99:22         155.246.138.207:50868   ESTABLISHED
+	tcp6       0      0 :::22                   :::*                    LISTEN    
+	udp        0      0 0.0.0.0:68              0.0.0.0:*                         
+	Active UNIX domain sockets (servers and established)
+	Proto RefCnt Flags       Type       State         I-Node   Path
+	unix  2      [ ACC ]     STREAM     LISTENING     5326     @/com/ubuntu/upstart
+	unix  2      [ ACC ]     STREAM     LISTENING     6506     /var/run/dbus/system_bus_socket
+	unix  3      [ ]         DGRAM                    6508     /dev/log
+	unix  2      [ ACC ]     SEQPACKET  LISTENING     5466     @/org/kernel/udev/udevd
+	unix  3      [ ]         STREAM     CONNECTED     7235    
+	unix  3      [ ]         STREAM     CONNECTED     7234    
+	unix  2      [ ]         DGRAM                    7172    
+	unix  3      [ ]         STREAM     CONNECTED     6523     /var/run/dbus/system_bus_socket
+	unix  3      [ ]         STREAM     CONNECTED     6522    
+	unix  3      [ ]         STREAM     CONNECTED     6513    
+	unix  3      [ ]         STREAM     CONNECTED     6512    
+	unix  3      [ ]         STREAM     CONNECTED     5913     @/com/ubuntu/upstart
+	unix  3      [ ]         STREAM     CONNECTED     5912    
+	unix  3      [ ]         DGRAM                    5480    
+	unix  3      [ ]         DGRAM                    5479    
+	unix  3      [ ]         STREAM     CONNECTED     5433     @/com/ubuntu/upstart
+	unix  3      [ ]         STREAM     CONNECTED     5430     
+
+	7. Display the partition table, mounted filesystems, disk space by df -H
+
+	ubuntu@ip-10-204-58-99:~$ df -H
+	Filesystem             Size   Used  Avail Use% Mounted on
+	/dev/xvda1             8.5G   916M   7.2G  12% /
+	udev                   869M   4.1k   869M   1% /dev
+	tmpfs                  350M   160k   350M   1% /run
+	none                   5.3M      0   5.3M   0% /run/lock
+	none                   874M      0   874M   0% /run/shm
+	/dev/xvda2             158G   197M   150G   1% /mnt
+
+	Terminate the OpenSolaris instance.
+
+	Type command:
+
+	$ ec2-terminate-instances  instance-id
+
+
